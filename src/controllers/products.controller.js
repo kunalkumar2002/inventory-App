@@ -20,10 +20,11 @@ export default class ProductController {
   }
 
   getAddProducts(req, res) {
-    return res.render("new-product", {});
+    return res.render("new-product", { errorMessage: null });
   }
 
   AddNewProduct(req, res) {
+    
     //accessing form data
     let products = ProductModel.get();
     // console.log(req.body);

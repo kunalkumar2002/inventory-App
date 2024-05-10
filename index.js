@@ -2,6 +2,7 @@ import express from "express";
 import ProductController from "./src/controllers/products.controller.js";
 import path from "path";
 import ejsLayouts from "express-ejs-layouts";
+import validate_req from "./src/middleware/validation.middleware.js";
 const server = express();
 
 //set view engine seting
@@ -11,7 +12,7 @@ server.set("view engine", "ejs");
   Note – use of qs library is recommended. 
 */
 
-server.use(express.urlencoded({extended : true})) 
+server.use(express.urlencoded({ extended: true }));
 //next we have to specify tthe path of view
 
 const filepath = path.join(path.resolve(), "src", "views");
@@ -24,7 +25,7 @@ const productcontroller = new ProductController();
 
 server.get("/", productcontroller.getProducts);
 server.get("/add", productcontroller.getAddProducts);
-server.post("/",productcontroller.AddNewProduct)
+server.post("/", validate_req, productcontroller.AddNewProduct);
 
 server.use(express.static("src/views"));
 server.listen(3400, () => {
