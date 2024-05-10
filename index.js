@@ -1,0 +1,32 @@
+import express from "express";
+import ProductController from "./src/controllers/products.controller.js";
+import path from "path";
+import ejsLayouts from "express-ejs-layouts";
+const server = express();
+
+//set view engine seting
+server.set("view engine", "ejs");
+/* when given false uses query 
+  string library to parse the data and when given true uses qs library to do the same.  
+  Note – use of qs library is recommended. 
+*/
+
+server.use(express.urlencoded({extended : true})) 
+//next we have to specify tthe path of view
+
+const filepath = path.join(path.resolve(), "src", "views");
+
+server.set("views", filepath);
+
+server.use(ejsLayouts);
+
+const productcontroller = new ProductController();
+
+server.get("/", productcontroller.getProducts);
+server.get("/add", productcontroller.getAddProducts);
+server.post("/",productcontroller.AddNewProduct)
+
+server.use(express.static("src/views"));
+server.listen(3400, () => {
+  console.log("serever is up and running");
+});
