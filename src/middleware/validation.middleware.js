@@ -1,29 +1,34 @@
-const validate_req = ( req, res, next) =>{
+import { body } from "express-validator";
+import { validationResult } from "express-validator";
+
+const validate_req = async (req, res, next) => {
   //data validation
-  const { name, price, imageUrl } = req.body;
-  let errors = [];
-  if (!name || name.trim() == "") {
-    /*if name is undefined or null or empty | .trim() method removes space from 
-___beginning and end of the string*/
-    errors.push("a valid name is required ");
+  //step 1 rules for validation
+
+  const rules = [
+    body("name").notEmpty().withMessage("Name is Required"),
+    body("price")
+      .isFloat({ gt: 0 })
+      .withMessage("Price should be positive Value"),
+    body("imageUrl").isURL().withMessage("invalid url"),
+  ];
+
+  //step 2 run those rules
+
+  await Promise.all(rules.map((rule) => rule.run(req)));
+
+  //step 3 check if there are any error after runnng the rules
+  let validationError = validationResult(req);
+  //console.log(validationError.array());
+
+  //returning the error
+  if (!validationError.isEmpty()) {
+    return res.render("new-product", {
+      errorMessage: validationError.array()[0].msg,
+    });
   }
-  if (!price || parseFloat(price) < 1) {
-    errors.push("Price must be a greater than 0");
-  }
-  //For checking URL we can use URL() parser which is in-built feature of JS
-  //If the string passed to this parser is not a valid URL, then it throws error
-  try {
-    const validURL = new URL(imageUrl);
-  } catch (err) {
-    errors.push("URL is not valid");
-  }
-  //If even one error is found we will render the form page with errorMessage
-  if (errors.length > 0) {
-    //We are sending only the first error message to the view
-    return res.render("new-product", { errorMessage: errors[0] });
-    //return keyword is used here show that code below do not executes
-    }
-    next();
-}
+
+  next();
+};
 
 export default validate_req;
