@@ -26,8 +26,12 @@ const productcontroller = new ProductController();
 server.get("/", productcontroller.getProducts);
 server.get("/add", productcontroller.getAddProducts);
 server.post("/", validate_req, productcontroller.AddNewProduct);
+server.get("/update-product/:id", productcontroller.getUpdateProductView);
+server.post("/update-product", productcontroller.postUpdateProduct);
+server.post("/delete-product/:id", productcontroller.deleteProduct);
 
 server.use(express.static("src/views"));
+server.use(express.static("public"));
 server.listen(3400, () => {
   console.log("serever is up and running");
 });

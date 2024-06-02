@@ -1,16 +1,28 @@
-
-export default class ProductModel{
-    constructor(_id, _name, _desc, _price, _imageUrl) {
-        this.id = _id;
-        this.name = _name;
-        this.desc = _desc;
-        this.price = _price;
-        this.imageUrl = _imageUrl;
-    }
-    static get() {
-      return products;
+export default class ProductModel {
+  constructor(_id, _name, _desc, _price, _imageUrl) {
+    this.id = _id;
+    this.name = _name;
+    this.desc = _desc;
+    this.price = _price;
+    this.imageUrl = _imageUrl;
   }
-  
+  static get() {
+    return products;
+  }
+
+  static update(productObj) {
+    const index = products.findIndex((p) => p.id == productObj.id);
+    products[index] = productObj;
+  }
+
+  static delete(id) {
+    const index = products.findIndex((p) => p.id == id);
+    if (index == -1) {
+      return;
+    }
+    products.splice(index, 1);
+  }
+
   static add({ name, price, desc, imageUrl }) {
     let new_product = new ProductModel(
       products.length + 1,
@@ -18,8 +30,12 @@ export default class ProductModel{
       price,
       desc,
       imageUrl
-    ) 
+    );
     products.push(new_product);
+  }
+
+  static getById(id) {
+    return products.find((p) => parseInt(p.id) === parseInt(id));
   }
 }
 var products = [
